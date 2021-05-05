@@ -84,7 +84,7 @@
         void insert(const value_type& entry);
         void attach(const value_type& entry);
         void operator =(const Sequence& source);
-	     void remove_current( );
+	    void remove_current( );
         // CONSTANT MEMBER FUNCTIONS
         size_type size( ) const { return many_nodes; }
         bool is_item( ) const { return (cursor != NULL); }
@@ -95,6 +95,8 @@
 	Node *cursor;
 	Node *precursor;
 	size_type many_nodes;
+
+    void initSequence(Node*);
     };
 
 

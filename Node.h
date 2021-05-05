@@ -156,6 +156,7 @@
         friend void list_piece(Node* , Node* , Node*& , Node*& );
         friend size_t list_occurrences(Node* , const Node::value_type& );
         friend Node::value_type list_remove_at(Node*& , size_t );
+        friend void initSequence(Node* newNode);
 
     private:
         value_type data_field;

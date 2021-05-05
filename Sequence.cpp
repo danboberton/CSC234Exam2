@@ -23,163 +23,176 @@ INVARIANT for the Sequence class:
 using namespace std;
 
 
-	//CONSTRUCTOR, COPY CONSTRUCTOR, & DESTRUCTOR
-	Sequence::Sequence()
-	{
-		head_ptr = NULL;
-		tail_ptr = NULL;
+//CONSTRUCTOR, COPY CONSTRUCTOR, & DESTRUCTOR
+Sequence::Sequence()
+{
+	head_ptr = NULL;
+	tail_ptr = NULL;
+	cursor = NULL;
+	precursor = NULL;
+	many_nodes = 0;
+}
+
+Sequence::Sequence(const Sequence& source)
+{
+	if (source.cursor == NULL) {
+		//Source is empty
+		list_copy(source.head_ptr, head_ptr, tail_ptr);
 		cursor = NULL;
 		precursor = NULL;
-		many_nodes = 0;
-	}
-
-	Sequence::Sequence(const Sequence& source)
-	{
-		if (source.cursor == NULL) {
-			//Source is empty
-			list_copy(source.head_ptr, head_ptr, tail_ptr);
-			cursor = NULL;
-			precursor = NULL;
-		} else if (source.cursor == source.head_ptr){
-			//Source does not have a mid-Sequence current item
-			list_copy(source.head_ptr, head_ptr, tail_ptr);
-			cursor = head_ptr;
-			precursor = NULL;
-		} else {
-			//Source's current item is mid-Sequence
-			//NOTE: See modified Node class for added list_piece function
-			list_piece(source.head_ptr, source.precursor, head_ptr, precursor);
-			list_piece(source.cursor, NULL, cursor, tail_ptr);
-			precursor->set_link(cursor);
-		}
-		many_nodes = source.many_nodes;
-	}
-
-	Sequence::~Sequence( )
-	{
-		list_clear(head_ptr);
-		many_nodes = 0;
-	}
-
-	//ASSIGNMENT OPERATOR
-	void Sequence::operator =(const Sequence& source)
-	{
-		if (this == &source) //Self-assignment test
-			return;
-
-		list_clear(head_ptr); //Clear calling Sequence
-		many_nodes = 0;
-
-		if (source.cursor == NULL) {
-			//No current item in source
-			list_copy(source.head_ptr, head_ptr, tail_ptr);
-			cursor = NULL;
-			precursor = NULL;			
-		} else if (source.cursor == source.head_ptr) {
-			//Current item is head of the list in source
-			list_copy(source.head_ptr, head_ptr, tail_ptr);
-			cursor = head_ptr;
-			precursor = NULL;
-		} else {
-			//Current item is mid-Sequence in source
-			//Source's current item is mid-Sequence
-			//NOTE: See modified Node class for added list_piece function
-			list_piece(source.head_ptr, source.precursor, head_ptr, precursor);
-			list_piece(source.cursor, NULL, cursor, tail_ptr);
-			precursor->set_link(cursor);
-		}
-		many_nodes = source.many_nodes;
-	}
-
-	//MODIFIERS
-	void Sequence::start( )
-	{
-		precursor = NULL;
+	} else if (source.cursor == source.head_ptr){
+		//Source does not have a mid-Sequence current item
+		list_copy(source.head_ptr, head_ptr, tail_ptr);
 		cursor = head_ptr;
+		precursor = NULL;
+	} else {
+		//Source's current item is mid-Sequence
+		//NOTE: See modified Node class for added list_piece function
+		list_piece(source.head_ptr, source.precursor, head_ptr, precursor);
+		list_piece(source.cursor, NULL, cursor, tail_ptr);
+		precursor->set_link(cursor);
+	}
+	many_nodes = source.many_nodes;
+}
+
+Sequence::~Sequence( )
+{
+	list_clear(head_ptr);
+	many_nodes = 0;
+}
+
+//ASSIGNMENT OPERATOR
+void Sequence::operator =(const Sequence& source)
+{
+	if (this == &source) //Self-assignment test
+		return;
+
+	list_clear(head_ptr); //Clear calling Sequence
+	many_nodes = 0;
+
+	if (source.cursor == NULL) {
+		//No current item in source
+		list_copy(source.head_ptr, head_ptr, tail_ptr);
+		cursor = NULL;
+		precursor = NULL;			
+	} else if (source.cursor == source.head_ptr) {
+		//Current item is head of the list in source
+		list_copy(source.head_ptr, head_ptr, tail_ptr);
+		cursor = head_ptr;
+		precursor = NULL;
+	} else {
+		//Current item is mid-Sequence in source
+		//Source's current item is mid-Sequence
+		//NOTE: See modified Node class for added list_piece function
+		list_piece(source.head_ptr, source.precursor, head_ptr, precursor);
+		list_piece(source.cursor, NULL, cursor, tail_ptr);
+		precursor->set_link(cursor);
+	}
+	many_nodes = source.many_nodes;
+}
+
+//MODIFIERS
+void Sequence::start( )
+{
+	precursor = NULL;
+	cursor = head_ptr;
+}
+
+void Sequence::advance( )
+{
+	if (cursor == NULL) {//No current item
+		return;
 	}
 
-	void Sequence::advance( )
-	{
-		if (cursor == NULL) //No current item
-			return;
+	precursor = cursor; //Now at head_ptr if previously NULL
+	cursor = cursor->link();
 
-		precursor = cursor; //Now at head_ptr if previously NULL
+	//If the cursor falls off the tail, the precursor resets too
+	if (cursor == NULL)
+		precursor = NULL;
+}
+
+void Sequence::insert(const value_type& entry)
+{
+	if (many_nodes == 0)
+	//Empty list, add first Node
+	{      
+		Node* newNode = new Node(entry, NULL);
+		initSequence(newNode);
+		
+	}
+	else if (cursor == NULL || cursor == head_ptr)
+	//Non-emtpy list without a current item or with current item at head
+	{
+		list_head_insert(head_ptr, entry);
+		cursor = head_ptr; 
+		//Precursor already NULL in this case;
+	}
+	else
+	//Must add between precursor and cursor     
+	{
+	list_insert(precursor, entry);
+	cursor = precursor->link();
+	}
+	++many_nodes;
+}
+
+void Sequence::attach(const value_type& entry)
+{
+	if (many_nodes == 0)
+	//Empty list, add first Node
+	{
+		Node* newNode = new Node(entry, NULL);
+		initSequence(newNode);
+	
+	//Precursor already NULL in this case
+	}
+	else if (cursor == NULL || cursor == tail_ptr)
+	//Non-empty list without a current item or with current item at tail
+	{
+		list_insert(tail_ptr, entry);
+		precursor = tail_ptr;
+		tail_ptr = tail_ptr->link();
+		cursor = tail_ptr;
+	}
+	else 
+	//Attach new Node after cursor
+	{
+		list_insert(cursor, entry);
 		cursor = cursor->link();
-
-		//If the cursor falls off the tail, the precursor resets too
-		if (cursor == NULL)
-			precursor = NULL;
 	}
+	++many_nodes;
+}
 
-	void Sequence::insert(const value_type& entry)
+void Sequence::remove_current( )
+{
+
+	assert(is_item());
+	if (cursor == head_ptr)
 	{
-		if (many_nodes == 0)
-		//Empty list, add first Node
-      {      
-         // to be completed
- 		}
-		else if (cursor == NULL || cursor == head_ptr)
-		//Non-emtpy list without a current item or with current item at head
-		{
-			list_head_insert(head_ptr, entry);
-			cursor = head_ptr; 
-			//Precursor already NULL in this case;
-		}
-		else
-		//Must add between precursor and cursor     
-  		{
-        // to be completed
- 		}
-		++many_nodes;
+		list_head_remove(head_ptr);
+		cursor = head_ptr;
+		precursor = NULL;
 	}
-
-	void Sequence::attach(const value_type& entry)
+	else
 	{
-		if (many_nodes == 0)
-		//Empty list, add first Node
-		{
-			// TODO to be completed
-      
-		//Precursor already NULL in this case
-		}
-		else if (cursor == NULL || cursor == tail_ptr)
-		//Non-empty list without a current item or with current item at tail
-		{
-			list_insert(tail_ptr, entry);
-			precursor = tail_ptr;
-			tail_ptr = tail_ptr->link();
-			cursor = tail_ptr;
-		}
-		else 
-		//Attach new Node after cursor
-      
- 		{
-            // to be completed
- 		}
-		++many_nodes;
+		cursor = cursor->link();
+		//advance function ensures precursor is never at the tail Node
+		list_remove(precursor); 
 	}
+	--many_nodes;
+}
 
-	void Sequence::remove_current( )
-	{
+//ACCESSORS
+Sequence::value_type Sequence::current( ) const
+{
+	assert(is_item());
+	return cursor->data();
 
-		assert(is_item());
-		if (cursor == head_ptr)
-		{
-         // to be completed
-		}
-		else
-		{
-			cursor = cursor->link();
-			//advance function ensures precursor is never at the tail Node
-			list_remove(precursor); 
-		}
-		--many_nodes;
-	}
+}
 
-	//ACCESSORS
-	Sequence::value_type Sequence::current( ) const
-	{
-		assert(is_item());
-      // to be completed
-
-	}
+void Sequence::initSequence(Node* newNode){
+head_ptr = newNode;
+tail_ptr = newNode;
+cursor = newNode;
+}

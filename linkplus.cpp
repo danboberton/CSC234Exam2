@@ -28,6 +28,7 @@ void list_head_insert(Node*& head_ptr, const Node::value_type& entry)
     head_ptr = insert_ptr;
 }
 
+// 
 void list_insert(Node* previous_ptr, const Node::value_type& entry) 
 {
     Node *insert_ptr;
@@ -200,3 +201,4 @@ Node* list_copy_segment(Node* head_ptr, size_t start, size_t finish)
     list_piece(start_ptr, finish_ptr, new_head, new_tail);
     return new_head;
 }
+
