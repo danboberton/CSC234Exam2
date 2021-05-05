@@ -67,7 +67,7 @@
 #include <cstdlib>  // Provides size_t
 #include "Node.h"  // Provides node class
 
-
+    // DO NOT Change public API!
     class Sequence
     {
     public:

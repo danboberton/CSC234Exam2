@@ -124,6 +124,7 @@
 #pragma once
 #include <cstdlib> // Provides size_t and NULL
 
+    // TODO change to template class for 20 pts EC.
     class Node
     {
     public:

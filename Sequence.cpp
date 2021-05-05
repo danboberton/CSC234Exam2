@@ -138,7 +138,7 @@ using namespace std;
 		if (many_nodes == 0)
 		//Empty list, add first Node
 		{
-      // to be completed
+			// TODO to be completed
       
 		//Precursor already NULL in this case
 		}

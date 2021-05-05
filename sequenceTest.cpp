@@ -11,7 +11,7 @@
 
 #include <iostream>     // Provides cout.
 #include <cstdlib>      // Provides size_t.
-#include "Sequence\Sequence.h"  // Provides the sequence class with double items.
+#include "Sequence.h"  // Provides the sequence class with double items.
 using namespace std;
 
 // Descriptions and points for each of the tests:
