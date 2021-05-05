@@ -125,10 +125,11 @@
 #include <cstdlib> // Provides size_t and NULL
 
     // TODO change to template class for 20 pts EC.
+    template <typename value_type>
     class Node
     {
     public:
-        typedef double value_type;
+        // typedef double value_type;
 
         // CONSTRUCTOR
         Node(const value_type& init_data = value_type(), Node* init_link = NULL);
@@ -145,21 +146,24 @@
         const Node* link() const;
         Node* link();
 
-        friend Node* list_locate(Node* , std::size_t );
-        friend std::size_t list_length(Node* );
-        friend void list_head_insert(Node*& , const Node::value_type& );
-        friend void list_insert(Node* , const Node::value_type& );
-        friend Node* list_search(Node* , const Node::value_type& );
-        friend void list_head_remove(Node*& );
-        friend void list_remove(Node* );
-        friend void list_copy(const Node* , Node*& , Node*& );
-        friend void list_piece(Node* , Node* , Node*& , Node*& );
-        friend size_t list_occurrences(Node* , const Node::value_type& );
-        friend Node::value_type list_remove_at(Node*& , size_t );
-
+       
     private:
         value_type data_field;
         Node* link_field;
+
+        // Friend Functions
+        template <value_type>
+        friend void list_insert(Node* previous_ptr, const value_type& entry);
+        template <value_type>
+        friend void list_head_insert(Node*& head_ptr, const value_type& entry);
+        template <value_type>
+        friend void list_head_remove(Node*& head_ptr);
+        template <value_type>
+        friend void list_remove(Node* previous_ptr);
+        template <value_type>
+        friend void list_copy(const Node* source_ptr, Node*& head_ptr, Node*& tail_ptr);
+        template <value_type>
+        friend void list_piece(Node* start_ptr, Node* end_ptr, Node*& head_ptr, Node*& tail_ptr);
     };
 
 

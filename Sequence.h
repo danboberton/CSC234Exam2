@@ -67,12 +67,13 @@
 #include <cstdlib>  // Provides size_t
 #include "Node.h"  // Provides node class
 
+
     // DO NOT Change public API!
     class Sequence
     {
     public:
         // TYPEDEFS and MEMBER CONSTANTS
-        typedef double value_type;
+        typedef long value_type;
         typedef std::size_t size_type;
         // CONSTRUCTORS and DESTRUCTOR
         Sequence( );
@@ -90,11 +91,14 @@
         bool is_item( ) const { return (cursor != NULL); }
         value_type current( ) const;
     private:
-	Node *head_ptr;
-	Node *tail_ptr;
-	Node *cursor;
-	Node *precursor;
+	Node<value_type> *head_ptr;
+	Node<value_type> *tail_ptr;
+	Node<value_type> *cursor;
+	Node<value_type> *precursor;
 	size_type many_nodes;
-    };
+
+void initSequence(Node<value_type>*);
+
+    };;
 
 
